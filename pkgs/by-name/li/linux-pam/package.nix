@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
     hash = "sha256-+JI8dAFZBS1xnb/CovgZQtaN00/K9hxwagLJuA/u744=";
   };
 
-  patches = [
+  patches = lib.optional config.security.enableWrappers [
     ./suid-wrapper-path.patch
   ];
 
