@@ -87,6 +87,8 @@ in
         inherit llvmPackages;
       };
 
+      ghc948CrossBinary = callPackage ../development/compilers/ghc/9.4.8-cross-binary.nix { };
+
       ghc966DebianBinary = callPackage ../development/compilers/ghc/9.6.6-debian-binary.nix { };
 
       ghc984Binary = callPackage ../development/compilers/ghc/9.8.4-binary.nix { };
@@ -110,6 +112,8 @@ in
           then
             # No bindist, "borrowing" the GHC from Debian
             bb.packages.ghc966DebianBinary
+          else if stdenv.buildPlatform.isPower64 then
+            bb.packages.ghc948CrossBinary
           else
             bb.packages.ghc948;
         inherit (buildPackages.python3Packages) sphinx;
@@ -126,6 +130,8 @@ in
           then
             # No bindist, "borrowing" the GHC from Debian
             bb.packages.ghc966DebianBinary
+          else if stdenv.buildPlatform.isPower64 then
+            bb.packages.ghc948CrossBinary
           else if stdenv.buildPlatform.isi686 then
             bb.packages.ghc948
           else
@@ -144,7 +150,7 @@ in
           then
             # No bindist, "borrowing" the GHC from Debian
             bb.packages.ghc966DebianBinary
-          else if stdenv.buildPlatform.isi686 then
+          else if stdenv.buildPlatform.isi686 || stdenv.buildPlatform.isPower64 then
             bb.packages.ghc967
           else
             bb.packages.ghc984Binary;
@@ -161,7 +167,7 @@ in
           then
             # No bindist, "borrowing" the GHC from Debian
             bb.packages.ghc966DebianBinary
-          else if stdenv.buildPlatform.isi686 then
+          else if stdenv.buildPlatform.isi686 || stdenv.buildPlatform.isPower64 then
             bb.packages.ghc967
           else
             bb.packages.ghc984Binary;
@@ -181,11 +187,7 @@ in
       ghc912 = compiler.ghc9122;
       ghcHEAD = callPackage ../development/compilers/ghc/head.nix {
         bootPkgs =
-          if
-            stdenv.buildPlatform.isPower64
-            && stdenv.buildPlatform.isBigEndian
-            && pkgs.stdenv.hostPlatform.isAbiElfv1
-          then
+          if stdenv.buildPlatform.isPower64 then
             # No bindist, using older source-built GHC
             bb.packages.ghc910
           else
@@ -232,6 +234,12 @@ in
         buildHaskellPackages = bh.packages.ghc902Binary;
         ghc = bh.compiler.ghc902Binary;
         compilerConfig = callPackage ../development/haskell-modules/configuration-ghc-9.0.x.nix { };
+        packageSetConfig = bootstrapPackageSet;
+      };
+      ghc948CrossBinary = callPackage ../development/haskell-modules {
+        buildHaskellPackages = bh.packages.ghc948CrossBinary;
+        ghc = bh.compiler.ghc948CrossBinary;
+        compilerConfig = callPackage ../development/haskell-modules/configuration-ghc-9.4.x.nix { };
         packageSetConfig = bootstrapPackageSet;
       };
       ghc966DebianBinary = callPackage ../development/haskell-modules {
