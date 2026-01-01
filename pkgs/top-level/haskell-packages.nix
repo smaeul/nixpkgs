@@ -99,6 +99,8 @@ in
         inherit llvmPackages;
       };
 
+      ghc948CrossBinary = callPackage ../development/compilers/ghc/9.4.8-cross-binary.nix { };
+
       ghc966DebianBinary = callPackage ../development/compilers/ghc/9.6.6-debian-binary.nix { };
 
       ghc984Binary = callPackage ../development/compilers/ghc/9.8.4-binary.nix { };
@@ -121,6 +123,8 @@ in
           then
             # No bindist, "borrowing" the GHC from Debian
             bb.packages.ghc966DebianBinary
+          else if stdenv.buildPlatform.isPower64 then
+            bb.packages.ghc948CrossBinary
           else if stdenv.buildPlatform.isRiscV64 then
             bb.packages.ghc966DebianBinary
           else if stdenv.buildPlatform.isLoongArch64 then
@@ -140,6 +144,8 @@ in
           then
             # No bindist, "borrowing" the GHC from Debian
             bb.packages.ghc966DebianBinary
+          else if stdenv.buildPlatform.isPower64 then
+            bb.packages.ghc948CrossBinary
           else if stdenv.buildPlatform.isRiscV64 then
             bb.packages.ghc966DebianBinary
           else if stdenv.buildPlatform.isLoongArch64 then
@@ -161,6 +167,8 @@ in
           then
             # No bindist, "borrowing" the GHC from Debian
             bb.packages.ghc966DebianBinary
+          else if stdenv.buildPlatform.isPower64 then
+            bb.packages.ghc967
           else if stdenv.buildPlatform.isRiscV64 then
             bb.packages.ghc966DebianBinary
           else if stdenv.buildPlatform.isLoongArch64 then
@@ -268,6 +276,12 @@ in
         buildHaskellPackages = bh.packages.ghc902Binary;
         ghc = bh.compiler.ghc902Binary;
         compilerConfig = callPackage ../development/haskell-modules/configuration-ghc-9.0.x.nix { };
+        packageSetConfig = bootstrapPackageSet;
+      };
+      ghc948CrossBinary = callPackage ../development/haskell-modules {
+        buildHaskellPackages = bh.packages.ghc948CrossBinary;
+        ghc = bh.compiler.ghc948CrossBinary;
+        compilerConfig = callPackage ../development/haskell-modules/configuration-ghc-9.4.x.nix { };
         packageSetConfig = bootstrapPackageSet;
       };
       ghc966DebianBinary = callPackage ../development/haskell-modules {
