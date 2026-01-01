@@ -44,6 +44,8 @@ mkDerivation {
   configureFlags = [
     # avoid QuickCheck dep which needs shared libs / TH
     "-f-selftest"
+    # allow bootstrap from an unregisterised GHC
+    "-f-threaded"
     # Building hadrian with -O1 takes quite some time with little benefit.
     # Additionally we need to recompile it on every change of UserSettings.hs.
     # See https://gitlab.haskell.org/ghc/ghc/-/merge_requests/1190
